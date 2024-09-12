@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        }
+        h1 {
+            margin: 20px;
+            color: #003c8f;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        /* Stack container with open top and closed sides */
+        .stack-container {
+            display: flex;
+            flex-direction: column; /* Stack from bottom to top */
+            justify-content: flex-end; /* Align items to bottom */
+            align-items: center;
+            margin: 0 auto;
+            width: 150px;
+            height: 300px;
+            border-left: 4px solid #0288d1;
+            border-right: 4px solid #0288d1;
+            border-bottom: 4px solid #0288d1;
+            border-radius: 0 0 10px 10px;
+            background-color: #e1f5fe;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        /* Disk styling with consistent width and orange color */
+        .disk {
+            height: 30px;
+            width: 150px;
+            background-color: orange;
+            border: 1px solid #01579b;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 2px;
+        }
+        #controls {
+            margin-top: 20px;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #0277bd;
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        input {
+            padding: 5px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        /* Aesthetic message box */
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: white;
+            background-color: #0288d1;
+            padding: 10px;
+            border-radius: 5px;
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Stack Visualization</h1>
+    <div class="stack-container" id="stackContainer"></div>
+    <div id="controls">
+        <input type="number" id="inputValue" placeholder="Value" />
+        <button onclick="push()">Push</button>
+        <button onclick="pop()">Pop</button>
+        <button onclick="peek()">Peek</button>
+        <button onclick="isEmpty()">Is Empty</button>
+        <button onclick="size()">Size</button>
+    </div>
+    <div class="message" id="message"></div>
+
+    <script>
+        let stack = [];
+        const stackContainer = document.getElementById('stackContainer');
+        const message = document.getElementById('message');
+
+        function updateStackView() {
+            stackContainer.innerHTML = '';
+            // Create and append each disk in the order from bottom to top
+            for (let i = stack.length - 1; i >= 0; i--) {
+                const disk = document.createElement('div');
+                disk.className = 'disk';
+                disk.textContent = stack[i];
+                stackContainer.appendChild(disk);
+            }
+        }
+
+        function push() {
+            const value = document.getElementById('inputValue').value;
+            if (value) {
+                if (stack.length * 32 < 300) { // Limit stack height to container size
+                    stack.push(parseInt(value));
+                    updateStackView();
+                    displayMessage(`Pushed ${value}`);
+                } else {
+                    displayMessage('Stack Overflow! No more space to push.');
+                }
+            } else {
+                displayMessage('Please enter a value to push.');
+            }
+            document.getElementById('inputValue').value = '';
+        }
+
+        function pop() {
+            if (stack.length > 0) {
+                const poppedValue = stack.pop();
+                updateStackView();
+                displayMessage(`Popped ${poppedValue}`);
+            } else {
+                displayMessage('Stack is empty. Nothing to pop.');
+            }
+        }
+
+        function peek() {
+            if (stack.length > 0) {
+                displayMessage(`Top value is ${stack[stack.length - 1]}`);
+            } else {
+                displayMessage('Stack is empty. Nothing to peek.');
+            }
+        }
+
+        function isEmpty() {
+            if (stack.length === 0) {
+                displayMessage('Stack is empty.');
+            } else {
+                displayMessage('Stack is not empty.');
+            }
+        }
+
+        function size() {
+            displayMessage(`Stack size is ${stack.length}`);
+        }
+
+        function displayMessage(msg) {
+            message.textContent = msg;
+        }
+    </script>
+</body>
+</html>

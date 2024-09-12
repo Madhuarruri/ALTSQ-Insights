@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Heap Visualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e0f7fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            color: #4682b4;
+            margin-top: 15px;
+        }
+        #heap-container {
+            margin-top: 15px;
+            width: 90%;
+            height: 420px;
+            border: 3px solid #4682b4;
+            position: relative;
+            background-color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .node {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #1e90ff;
+            text-align: center;
+            line-height: 50px;
+            font-weight: bold;
+            color: #fff;
+            border: 3px solid #0000cd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+            z-index: 2;
+        }
+        .line {
+            position: absolute;
+            background-color: #4682b4;
+            transform-origin: top left;
+            height: 3px;
+            z-index: 1;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        #controls input {
+            padding: 8px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 2px solid #4682b4;
+            border-radius: 8px;
+        }
+        #controls button {
+            padding: 8px 20px;
+            font-size: 16px;
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #controls button:hover {
+            background-color: #5f9ea0;
+        }
+        #message {
+            position:absolute;
+            top:80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+            font-weight: bold;
+            display: none;
+            background-color: #ffffffaa;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #ff6347;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Min Heap Visualization</h1>
+    <div id="heap-container"></div>
+    <div id="controls">
+        <input type="number" id="insert-input" placeholder="Insert value">
+        <button onclick="insertNode()">Insert</button>
+        <input type="number" id="delete-input" placeholder="Delete value">
+        <button onclick="deleteNode()">Delete</button>
+    </div>
+    <div id="message">Node not found!</div>
+
+    <script>
+        let heap = [];
+        const INITIAL_DISTANCE = 100; // Initial distance between nodes
+        const VERTICAL_SPACING = 80; // Vertical spacing between levels
+
+        function clearInputFields() {
+            document.getElementById('insert-input').value = '';
+            document.getElementById('delete-input').value = '';
+        }
+
+        function insertNode() {
+            const value = parseInt(document.getElementById('insert-input').value);
+            if (!isNaN(value)) {
+                heap.push(value);
+                heapifyUp(heap.length - 1);
+                renderHeap();
+                clearInputFields();
+            }
+        }
+
+        function heapifyUp(index) {
+            while (index > 0) {
+                const parentIndex = Math.floor((index - 1) / 2);
+                if (heap[parentIndex] > heap[index]) {
+                    [heap[parentIndex], heap[index]] = [heap[index], heap[parentIndex]];
+                    index = parentIndex;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        function deleteNode() {
+            const value = parseInt(document.getElementById('delete-input').value);
+            if (!isNaN(value)) {
+                const index = heap.indexOf(value);
+                if (index !== -1) {
+                    heap[index] = heap.pop(); // Replace with last element
+                    heapifyDown(index);
+                    renderHeap();
+                } else {
+                    showMessage("Node not found!");
+                }
+                clearInputFields();
+            }
+        }
+
+        function heapifyDown(index) {
+            while (true) {
+                const leftChild = 2 * index + 1;
+                const rightChild = 2 * index + 2;
+                let smallest = index;
+
+                if (leftChild < heap.length && heap[leftChild] < heap[smallest]) {
+                    smallest = leftChild;
+                }
+                if (rightChild < heap.length && heap[rightChild] < heap[smallest]) {
+                    smallest = rightChild;
+                }
+                if (smallest !== index) {
+                    [heap[smallest], heap[index]] = [heap[index], heap[smallest]];
+                    index = smallest;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        function renderHeap() {
+            const container = document.getElementById('heap-container');
+            container.innerHTML = '';
+            renderNode(container, 0, window.innerWidth / 2, 20, 0);
+        }
+
+        function renderNode(container, index, x, y, depth) {
+            if (index >= heap.length) return;
+
+            const distance = INITIAL_DISTANCE / Math.pow(2, depth);
+            const nodeElement = document.createElement('div');
+            nodeElement.className = 'node';
+            nodeElement.textContent = heap[index];
+            nodeElement.style.left = `${x - 25}px`;
+            nodeElement.style.top = `${y - 25}px`;
+            container.appendChild(nodeElement);
+
+            const leftChild = 2 * index + 1;
+            const rightChild = 2 * index + 2;
+
+            if (leftChild < heap.length) {
+                drawLine(container, x, y, x - distance, y + VERTICAL_SPACING);
+                renderNode(container, leftChild, x - distance, y + VERTICAL_SPACING, depth + 1);
+            }
+            if (rightChild < heap.length) {
+                drawLine(container, x, y, x + distance, y + VERTICAL_SPACING);
+                renderNode(container, rightChild, x + distance, y + VERTICAL_SPACING, depth + 1);
+            }
+        }
+
+        function drawLine(container, x1, y1, x2, y2) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.style.width = `${length}px`;
+            line.style.left = `${x1}px`;
+            line.style.top = `${y1}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            container.appendChild(line);
+        }
+
+        function showMessage(text) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

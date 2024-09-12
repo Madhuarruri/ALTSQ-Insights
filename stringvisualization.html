@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Visualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e0f7fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        h1 {
+            color: #4682b4;
+            margin-top: 20px;
+        }
+        #string-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 20px;
+            width: 90%;  /* Full width of the page */
+            height: 100px;  /* Fixed height */
+            border: 2px solid #4682b4;
+            background-color: white;
+            overflow: auto;
+            white-space: nowrap;
+            padding: 10px;
+        }
+        .string-node {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 2px;
+        }
+        .node {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+            border: 2px solid #4682b4;
+        }
+        .node.non-empty {
+            background-color: #87cefa; /* Color for non-empty nodes */
+        }
+        .node.empty {
+            background-color: #f0f8ff; /* Color for empty nodes */
+            border: 2px solid white;   /* White border for empty nodes */
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        #controls input {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        #controls button {
+            padding: 5px 15px;
+            font-size: 16px;
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #controls button:hover {
+            background-color: #5f9ea0;
+        }
+        #message {
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>String Visualization</h1>
+    <div id="string-container"></div>
+    <div id="controls">
+        <input type="text" id="insert-input" placeholder="Enter string">
+        <button onclick="insertString()">Go</button>
+        <input type="text" id="delete-input" placeholder="Delete character">
+        <button onclick="deleteCharacter()">Delete</button>
+        <input type="text" id="search-input" placeholder="Search character">
+        <button onclick="searchCharacter()">Search</button>
+    </div>
+    <div id="message">Character not found!</div>
+
+    <script>
+        let stringData = "";
+
+        function insertString() {
+            const value = document.getElementById('insert-input').value;
+            if (value) {
+                stringData = value;
+                renderString();
+                document.getElementById('insert-input').value = '';  // Clear input
+            }
+        }
+
+        function deleteCharacter() {
+            const char = document.getElementById('delete-input').value;
+            if (char && char.length === 1) {
+                const index = stringData.indexOf(char);
+                if (index !== -1) {
+                    stringData = stringData.slice(0, index) + stringData.slice(index + 1);
+                    renderString();
+                } else {
+                    showMessage("Character not found!");
+                }
+                document.getElementById('delete-input').value = '';  // Clear input
+            }
+        }
+
+        function searchCharacter() {
+            const char = document.getElementById('search-input').value;
+            if (char && char.length === 1) {
+                const index = stringData.indexOf(char);
+                if (index !== -1) {
+                    highlightCharacter(index);
+                } else {
+                    showMessage("Character not found!");
+                }
+                document.getElementById('search-input').value = '';  // Clear input
+            }
+        }
+
+        function highlightCharacter(index) {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach((node, idx) => {
+                if (idx === index) {
+                    node.style.backgroundColor = '#ff6347';  // Highlight character
+                } else {
+                    node.style.backgroundColor = node.classList.contains('empty') ? '#f0f8ff' : '#87cefa';  // Reset color
+                }
+            });
+        }
+
+        function renderString() {
+            const container = document.getElementById('string-container');
+            container.innerHTML = '';  // Clear container
+
+            [...stringData].forEach((char) => {
+                const stringNode = document.createElement('div');
+                stringNode.className = 'string-node';
+
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'node ' + (char === ' ' ? 'empty' : 'non-empty');
+                nodeElement.textContent = char;
+                
+                stringNode.appendChild(nodeElement);
+                container.appendChild(stringNode);
+            });
+        }
+
+        function showMessage(text) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

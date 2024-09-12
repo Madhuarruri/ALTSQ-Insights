@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selection Sort Visualization</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e0f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      height: 100vh;
+    }
+    .container {
+      width: 90%;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #bbdefb;
+      border: 2px solid #64b5f6;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .input-container {
+      margin-bottom: 20px;
+    }
+    .input-container input,
+    .input-container select {
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #64b5f6;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    .graph-box {
+      background-color: #ffffff;
+      border: 2px solid #64b5f6;
+      border-radius: 10px;
+      padding: 10px;
+      display: inline-block;
+      margin: 20px 0;
+      position: relative;
+      width: 100%;
+      overflow: auto;
+    }
+    .bars-container {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 300px;
+      position: relative;
+    }
+    .bar {
+      display: inline-block;
+      margin: 0 5px;
+      background-color: #42a5f5;
+      width: 40px;
+      transition: height 0s, background-color 0s;
+      vertical-align: bottom;
+      position: relative;
+    }
+    .bar-value {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      color: #000000;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .highlight {
+      background-color: #29b6f6;
+    }
+    .selected {
+      background-color: #ff9800;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px;
+      border: none;
+      background-color: #42a5f5;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    button:hover {
+      background-color: #1e88e5;
+    }
+    .message {
+      font-size: 24px;
+      color: green;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Selection Sort Visualization</h1>
+    <div class="input-container">
+      <input type="text" id="arrayInput" placeholder="Enter array elements separated by commas (e.g., 3,6,8,10,1,2,1)">
+      <select id="sortOrder">
+        <option value="asc">Ascending</option>
+        <option value="desc">Descending</option>
+      </select>
+      <button onclick="initializeArray()">Submit</button>
+    </div>
+    <div class="graph-box">
+      <div class="bars-container" id="barsContainer"></div>
+      <div id="message" class="message">Successfully Sorted!</div>
+    </div>
+    <div class="controls">
+      <button id="nextStepBtn">Next Step</button>
+      <button onclick="reset()">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    let array = [];
+    let sortOrder = 'asc';
+    let i = 0, j = 0;
+    let sorted = false;
+
+    function initializeArray() {
+      const input = document.getElementById('arrayInput').value;
+      array = input.split(',').map(Number);
+      sortOrder = document.getElementById('sortOrder').value;
+      if (array.length > 0 && array.every(num => !isNaN(num))) {
+        createBars();
+        document.getElementById('message').style.display = 'none'; // Hide success message
+        i = 0;
+        j = 0;
+        sorted = false;
+      } else {
+        alert('Please enter a valid array of numbers.');
+      }
+    }
+
+    function createBars() {
+      const barsContainer = document.getElementById('barsContainer');
+      barsContainer.innerHTML = '';
+
+      array.forEach((value) => {
+        // Create bar
+        const bar = document.createElement('div');
+        bar.style.height = `${value * 10}px`; // Height 10 times the value
+        bar.className = 'bar';
+        bar.style.backgroundColor = getColor(value);
+
+        // Create value inside bar
+        const valueLabel = document.createElement('div');
+        valueLabel.className = 'bar-value';
+        valueLabel.textContent = value;
+        bar.appendChild(valueLabel);
+
+        barsContainer.appendChild(bar);
+      });
+    }
+
+    function getColor(value) {
+      // Function to generate a color based on the value
+      const colors = ['#ff5252', '#ffeb3b', '#4caf50', '#ff9800', '#e91e63'];
+      return colors[value % colors.length];
+    }
+
+    function nextStep() {
+  if (sorted) return;
+  const bars = document.querySelectorAll('.bar');
+  let swapped = false;
+
+  if (i < array.length - 1) {
+    // Find the minimum or maximum element in the unsorted part of the array
+    let minIndex = i;
+
+    for (let j = i + 1; j < array.length; j++) {
+      if ((sortOrder === 'asc' && array[j] < array[minIndex]) || (sortOrder === 'desc' && array[j] > array[minIndex])) {
+        minIndex = j;
+      }
+    }
+
+    // Highlight the minimum/maximum element and the current position
+    let currentBar = bars[i];
+    let minBar = bars[minIndex];
+
+    currentBar.classList.add('highlight');
+    minBar.classList.add('highlight');
+
+    // Swap if needed
+    if (minIndex !== i) {
+      [array[i], array[minIndex]] = [array[minIndex], array[i]];
+      swapped = true;
+
+      setTimeout(() => {
+        createBars();
+        currentBar.classList.remove('highlight');
+        minBar.classList.remove('highlight');
+      }, 500);
+    }
+
+    i++;
+  } else {
+    if (isArraySorted()) {
+      sorted = true;
+      document.getElementById('message').style.display = 'block'; // Show success message
+    }
+  }
+}
+
+    function isArraySorted() {
+      for (let k = 0; k < array.length - 1; k++) {
+        if ((sortOrder === 'asc' && array[k] > array[k + 1]) || 
+            (sortOrder === 'desc' && array[k] < array[k + 1])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function reset() {
+      i = 0;
+      j = 0;
+      sorted = false;
+      array = [];
+      createBars();
+      document.getElementById('message').style.display = 'none'; // Hide success message
+    }
+
+    document.getElementById('nextStepBtn').addEventListener('click', nextStep);
+  </script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked ListVisualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e0f7fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        h1 {
+            color: #4682b4;
+            margin-top: 20px;
+        }
+        #array-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            width: 90%;
+            height: 250px;
+            border: 2px solid #4682b4;
+            background-color: white;
+            overflow: hidden;
+            position: relative; /* Added for positioning lines */
+            padding: 10px;
+        }
+        .array-node {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px; /* Added gap between nodes */
+            position: relative;
+        }
+        .node {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: rgb(0, 0, 0);
+            border: 2px solid #4682b4;
+        }
+        .head {
+            background-color: #ff8c00; /* Head node color */
+        }
+        .null {
+            background-color: #ffd000; /* Null node color */
+        }
+        .default {
+            background-color: #87cefa; /* Default node color */
+        }
+        .line {
+            position: absolute;
+            height: 2px;
+            background-color: #4682b4;
+        }
+        #controls {
+            margin-top: 20px;
+        }
+        #controls input {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        #controls button {
+            padding: 5px 15px;
+            font-size: 16px;
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #controls button:hover {
+            padding: 5px 15px;
+            font-size: 16px;
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #message {
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
+            display: none;
+        }
+        #extra-controls {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Linked-List Visualization</h1>
+    <div id="array-container">
+        <div class="array-node">
+            <div class="node head">Head</div>
+        </div>
+        <div id="dynamic-nodes"></div>
+        <div class="array-node">
+            <div class="node null">Null</div>
+        </div>
+    </div>
+    <div id="controls">
+        <input type="number" id="insert-input" placeholder="Insert value">
+        <button onclick="insertNode()">Insert</button>
+        <input type="number" id="delete-input" placeholder="Delete value">
+        <button onclick="deleteNode()">Delete</button>
+        <input type="number" id="search-input" placeholder="Search value">
+        <button onclick="searchNode()">Search</button>
+        <button onclick="sortArray()">Sort</button>
+        <button onclick="reverseArray()">Reverse</button>
+        <button onclick="clearArray()">Clear</button>
+    
+    <div id="message">Node not found!</div>
+
+    <script>
+        let array = [];
+
+        function insertNode() {
+            const value = parseInt(document.getElementById('insert-input').value);
+            if (!isNaN(value)) {
+                array.push(value);
+                renderArray();
+                document.getElementById('insert-input').value = '';  // Clear input
+            }
+        }
+
+        function deleteNode() {
+            const value = parseInt(document.getElementById('delete-input').value);
+            if (!isNaN(value)) {
+                const index = array.indexOf(value);
+                if (index !== -1) {
+                    array.splice(index, 1);
+                    renderArray();
+                } else {
+                    showMessage("Node not found!");
+                }
+                document.getElementById('delete-input').value = '';  // Clear input
+            }
+        }
+
+        function searchNode() {
+            const value = parseInt(document.getElementById('search-input').value);
+            if (!isNaN(value)) {
+                const index = array.indexOf(value);
+                if (index !== -1) {
+                    highlightNode(index);
+                } else {
+                    showMessage("Node not found!");
+                }
+                document.getElementById('search-input').value = '';  // Clear input
+            }
+        }
+
+        function highlightNode(index) {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach((node, idx) => {
+                if (idx === index + 1) { // Adjust for head and null nodes
+                    node.style.backgroundColor = '#ff6347';  // Highlight node
+                } else if (node.classList.contains('head') || node.classList.contains('null')) {
+                    node.style.backgroundColor = node.classList.contains('head') ? '#ff8c00' : '#ffd000';
+                } else {
+                    node.style.backgroundColor = '#87cefa';  // Default node color
+                }
+            });
+        }
+
+        function renderArray() {
+            const container = document.getElementById('dynamic-nodes');
+            container.innerHTML = '';  // Clear container
+
+            array.forEach((value) => {
+                const arrayNode = document.createElement('div');
+                arrayNode.className = 'array-node';
+
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'node default';
+                nodeElement.textContent = value;
+
+                arrayNode.appendChild(nodeElement);
+                container.appendChild(arrayNode);
+            });
+
+            drawLines();
+        }
+
+        function drawLines() {
+            // Remove existing lines
+            const existingLines = document.querySelectorAll('.line');
+            existingLines.forEach(line => line.remove());
+
+            const nodes = document.querySelectorAll('.array-node');
+            for (let i = 0; i < nodes.length - 1; i++) {
+                const node1 = nodes[i];
+                const node2 = nodes[i + 1];
+                const line = document.createElement('div');
+                line.className = 'line';
+                
+                const rect1 = node1.getBoundingClientRect();
+                const rect2 = node2.getBoundingClientRect();
+                const containerRect = document.getElementById('array-container').getBoundingClientRect();
+
+                line.style.width = `${rect2.left - rect1.right}px`;
+                line.style.top = `${rect1.top + rect1.height / 2 - containerRect.top}px`;
+                line.style.left = `${rect1.right - containerRect.left}px`;
+                
+                document.getElementById('array-container').appendChild(line);
+            }
+        }
+
+        function sortArray() {
+            array.sort((a, b) => a - b);
+            renderArray();
+        }
+
+        function reverseArray() {
+            array.reverse();
+            renderArray();
+        }
+
+        function clearArray() {
+            array = [];
+            renderArray();
+        }
+
+        function showMessage(text) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        // Initial render
+        renderArray();
+    </script>
+</body>
+</html>

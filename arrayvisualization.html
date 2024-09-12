@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array Visualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e0f7fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        h1 {
+            color: #4682b4;
+            margin-top: 20px;
+        }
+        #array-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-top: 20px;
+            width: 90%;  /* Full width of the page */
+            height: 250px;  /* Fixed height */
+            border: 2px solid #4682b4;
+            background-color: white;
+            overflow: auto;
+            white-space: nowrap;
+            padding: 10px;
+        }
+        .array-node {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 5px; /* Slight gap between nodes */
+        }
+        .node {
+            width: 50px;
+            height: 50px;
+            background-color: #87cefa;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: rgb(5, 0, 0);
+            border: 2px solid #4682b4;
+        }
+        .index {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #4682b4;
+        }
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping if needed */
+            justify-content: center; /* Center buttons horizontally */
+            gap: 10px; /* Space between buttons */
+        }
+        #controls input {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            flex: 1; /* Make inputs expand to fill space */
+        }
+        #controls button {
+            padding: 5px 15px;
+            font-size: 16px;
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 5px; /* Space around buttons */
+        }
+        #controls button:hover {
+            background-color: #5f9ea0;
+        }
+        #message {
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Array Visualization</h1>
+    <div id="array-container"></div>
+    <div id="controls">
+        <input type="number" id="insert-input" placeholder="Insert value">
+        <button onclick="insertNode()">Insert</button>
+        <input type="number" id="delete-input" placeholder="Delete value">
+        <button onclick="deleteNode()">Delete</button>
+        <input type="number" id="search-input" placeholder="Search value">
+        <button onclick="searchNode()">Search</button>
+        <button onclick="reverseArray()">Reverse</button>
+        <button onclick="sortArray()">Sort</button>
+        <button onclick="clearArray()">Clear</button>
+    </div>
+    <div id="message">Node not found!</div>
+
+    <script>
+        let array = [];
+
+        function insertNode() {
+            const value = parseInt(document.getElementById('insert-input').value);
+            if (!isNaN(value)) {
+                array.push(value);
+                renderArray();
+                document.getElementById('insert-input').value = '';  // Clear input
+            }
+        }
+
+        function deleteNode() {
+            const value = parseInt(document.getElementById('delete-input').value);
+            if (!isNaN(value)) {
+                const index = array.indexOf(value);
+                if (index !== -1) {
+                    array.splice(index, 1);
+                    renderArray();
+                } else {
+                    showMessage("Node not found!");
+                }
+                document.getElementById('delete-input').value = '';  // Clear input
+            }
+        }
+
+        function searchNode() {
+            const value = parseInt(document.getElementById('search-input').value);
+            if (!isNaN(value)) {
+                const index = array.indexOf(value);
+                if (index !== -1) {
+                    highlightNode(index);
+                } else {
+                    showMessage("Node not found!");
+                }
+                document.getElementById('search-input').value = '';  // Clear input
+            }
+        }
+
+        function highlightNode(index) {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach((node, idx) => {
+                if (idx === index) {
+                    node.style.backgroundColor = '#ff6347';  // Highlight node
+                } else {
+                    node.style.backgroundColor = '#87cefa';  // Reset color
+                }
+            });
+        }
+
+        function renderArray() {
+            const container = document.getElementById('array-container');
+            container.innerHTML = '';  // Clear container
+
+            array.forEach((value, index) => {
+                const arrayNode = document.createElement('div');
+                arrayNode.className = 'array-node';
+
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'node';
+                nodeElement.textContent = value;
+                
+                const indexElement = document.createElement('div');
+                indexElement.className = 'index';
+                indexElement.textContent = `${index}`;
+
+                arrayNode.appendChild(nodeElement);
+                arrayNode.appendChild(indexElement);
+                container.appendChild(arrayNode);
+            });
+        }
+
+        function showMessage(text) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        function reverseArray() {
+            array.reverse();
+            renderArray();
+        }
+
+        function sortArray() {
+            array.sort((a, b) => a - b);
+            renderArray();
+        }
+
+        function clearArray() {
+            array = [];
+            renderArray();
+        }
+    </script>
+</body>
+</html>

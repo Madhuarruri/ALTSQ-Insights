@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Visualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #e0f7fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        h1 {
+            color: #4682b4;
+            margin-top: 20px;
+        }
+        #queue-container {
+            position: relative;
+            margin-top: 20px;
+            width: 90%;  /* Full width of the page */
+            height: 100px;  /* Fixed height */
+            border: 2px solid #4682b4;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .pipe {
+            width: 100%;
+            height: 10px;
+            background-color: #4682b4;
+            position: absolute;
+        }
+        .top-pipe {
+            top: 20px;
+        }
+        .bottom-pipe {
+            bottom: 20px;
+        }
+        .queue-node {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 2px;
+        }
+        .node {
+            width: 50px;
+            height: 50px;
+            background-color: #FFA500; /* Orange */
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            border: 2px solid #4682b4;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        #controls input {
+            padding: 8px;
+            font-size: 16px;
+            border: 2px solid #4682b4;
+            border-radius: 5px;
+            width: 150px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #controls button {
+            padding: 8px 15px;
+            font-size: 16px;
+            background-color: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #controls button:hover {
+            background-color: #5f9ea0;
+        }
+        #queue-info {
+            margin-top: 20px;
+            color: #4682b4;
+            padding: 10px;
+            border: 2px solid #4682b4;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;  /* Hidden by default */
+            font-weight: bold;
+            width: 50%;
+            text-align: center;
+        }
+        #message {
+            margin-top: 20px;
+            color: #ff4500;
+            font-weight: bold;
+            padding: 10px;
+            border: 2px solid #ff4500;
+            background-color: #ffe6e6;
+            border-radius: 5px;
+            display: none;  /* Hidden by default */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Queue Visualization</h1>
+    <div id="queue-container">
+        <div class="pipe top-pipe"></div>
+        <div class="pipe bottom-pipe"></div>
+    </div>
+    <div id="controls">
+        <input type="number" id="enqueue-input" placeholder="Enqueue value">
+        <button onclick="enqueue()">Enqueue</button>
+        <button onclick="dequeue()">Dequeue</button>
+        <button onclick="peek()">Peek</button>
+        <button onclick="size()">Size</button>
+        <button onclick="isEmpty()">Is Empty?</button>
+    </div>
+    <div id="queue-info"></div>
+    <div id="message"></div>
+
+    <script>
+        let queue = [];
+
+        function enqueue() {
+            const value = parseInt(document.getElementById('enqueue-input').value);
+            if (!isNaN(value)) {
+                queue.push(value); // Add to the rear
+                renderQueue();
+                document.getElementById('enqueue-input').value = '';  // Clear input
+            }
+        }
+
+        function dequeue() {
+            if (queue.length > 0) {
+                queue.shift(); // Remove from the front
+                renderQueue();
+                showQueueInfo(`Dequeued successfully!`);
+            } else {
+                showMessage("Queue is empty!");
+            }
+        }
+
+        function peek() {
+            if (queue.length > 0) {
+                showQueueInfo(`Peek: ${queue[0]}`);
+            } else {
+                showQueueInfo('Queue is empty!');
+            }
+        }
+
+        function size() {
+            showQueueInfo(`Size: ${queue.length}`);
+        }
+
+        function isEmpty() {
+            showQueueInfo(queue.length === 0 ? 'Queue is empty!' : 'Queue is not empty!');
+        }
+
+        function renderQueue() {
+            const container = document.getElementById('queue-container');
+            container.innerHTML = '<div class="pipe top-pipe"></div><div class="pipe bottom-pipe"></div>';  // Reset container with pipes
+
+            queue.forEach(value => {
+                const queueNode = document.createElement('div');
+                queueNode.className = 'queue-node';
+
+                const nodeElement = document.createElement('div');
+                nodeElement.className = 'node';
+                nodeElement.textContent = value;
+
+                queueNode.appendChild(nodeElement);
+                container.appendChild(queueNode);
+            });
+        }
+
+        function showMessage(text) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        function showQueueInfo(text) {
+            const info = document.getElementById('queue-info');
+            info.textContent = text;
+            info.style.display = 'block';
+            setTimeout(() => {
+                info.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

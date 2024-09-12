@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALTSQ Insights</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5; /* Light background color for the whole page */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            border: 10px solid #1e90ff; /* Blue border around the page */
+            box-shadow: 0 0 25px rgba(30, 144, 255, 0.7); /* Full page shadow */
+            border-radius: 20px;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: #000; /* Black title */
+            margin-top: 50px;
+            font-weight: bold;
+            background-color: #e6f7ff; /* Light blue background for the title */
+            padding: 20px 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            color: #4682b4; /* Steel blue for subtitle */
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: lowercase;
+            text-align: center;
+        }
+
+        #grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 85%;
+            margin-bottom: 50px;
+        }
+
+        .grid-item {
+            background-color: #fff;
+            border: 6px solid #1e90ff; /* Thicker blue border */
+            padding: 0;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(30, 144, 255, 0.3); /* Attractive box shadow */
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(30, 144, 255, 0.5); /* Deeper shadow on hover */
+        }
+
+        /* Random light background colors for each box */
+        .grid-item:nth-child(1) { background-color: #f0e68c; } /* Light Yellow */
+        .grid-item:nth-child(2) { background-color: #d3f8e2; } /* Mint */
+        .grid-item:nth-child(3) { background-color: #ffcccb; } /* Light Coral */
+        .grid-item:nth-child(4) { background-color: #fafad2; } /* Light Goldenrod Yellow */
+        .grid-item:nth-child(5) { background-color: #add8e6; } /* Light Blue */
+        .grid-item:nth-child(6) { background-color: #e6e6fa; } /* Lavender */
+        .grid-item:nth-child(7) { background-color: #ffdab9; } /* Peach Puff */
+        .grid-item:nth-child(8) { background-color: #ffe4b5; } /* Moccasin */
+        .grid-item:nth-child(9) { background-color: #e0ffff; } /* Light Cyan */
+        .grid-item:nth-child(10) { background-color: #f5f5dc; } /* Beige */
+        .grid-item:nth-child(11) { background-color: #f0fff0; } /* Honeydew */
+        .grid-item:nth-child(12) { background-color: #fffacd; } /* Lemon Chiffon */
+
+        .grid-item h3 {
+            font-size: 1.8em;
+            color: #000000; /* Black for the name */
+            margin: 40px 0;
+            font-family: 'Roboto', sans-serif; /* New font */
+            text-transform: uppercase; /* Convert text to uppercase */
+        }
+
+        footer {
+            font-size: 1em;
+            margin-top: 20px;
+            color: #1e90ff; /* Blue footer text */
+            background-color: #e6f7ff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+    <!-- Google Fonts link for Roboto font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h1>ALTSQ Insights</h1>
+
+    <div id="grid-container">
+        <!-- Array -->
+        <div class="grid-item" onclick="window.location.href='array.html'">
+            <h3>1. Array</h3>
+        </div>
+
+        <!-- Linked List -->
+        <div class="grid-item" onclick="window.location.href='linkedlist.html'">
+            <h3>2. Linked List</h3>
+        </div>
+
+        <!-- Stack -->
+        <div class="grid-item" onclick="window.location.href='stack.html'">
+            <h3>3. Stack</h3>
+        </div>
+
+        <!-- Queue -->
+        <div class="grid-item" onclick="window.location.href='queue.html'">
+            <h3>4. Queue</h3>
+        </div>
+
+        <!-- Binary Search Tree -->
+        <div class="grid-item" onclick="window.location.href='binarysearchtree.html'">
+            <h3>5. BST (Tree)</h3>
+        </div>
+
+        <!-- AVL Tree -->
+        <div class="grid-item" onclick="window.location.href='avltree.html'">
+            <h3>6. AVL Tree</h3>
+        </div>
+
+        <!-- Heap -->
+        <div class="grid-item" onclick="window.location.href='heap.html'">
+            <h3>7. Heap</h3>
+        </div>
+
+        <!-- String -->
+        <div class="grid-item" onclick="window.location.href='string.html'">
+            <h3>8. String</h3>
+        </div>
+
+        <!-- Bubble Sort -->
+        <div class="grid-item" onclick="window.location.href='bubble.html'">
+            <h3>9. Bubble Sort</h3>
+        </div>
+
+        <!-- Insertion Sort -->
+        <div class="grid-item" onclick="window.location.href='insertion.html'">
+            <h3>10. Insertion Sort</h3>
+        </div>
+
+        <!-- Selection Sort -->
+        <div class="grid-item" onclick="window.location.href='selection.html'">
+            <h3>11. Selection Sort</h3>
+        </div>
+
+        <!-- Tower of Hanoi -->
+        <div class="grid-item" onclick="window.location.href='tower.html'">
+            <h3>12. Tower of Hanoi</h3>
+        </div>
+    </div>
+
+    <footer>&copy; 2024 ALTSQ Visualizations. Designed with elegance.</footer>
+</body>
+</html>
